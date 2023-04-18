@@ -6,7 +6,7 @@ describe('LiquidOptions#*_delimiter_*', function () {
       tagDelimiterLeft: '<%=',
       tagDelimiterRight: '%>'
     })
-    const html = await engine.parseAndRender('<%=if true%>foo<%=endif%> ')
+    const html = engine.parseAndRenderSync('<%=if true%>foo<%=endif%> ')
     return expect(html).toBe('foo ')
   })
   it('should respect output_delimiter_*', async function () {
@@ -14,7 +14,7 @@ describe('LiquidOptions#*_delimiter_*', function () {
       outputDelimiterLeft: '<<',
       outputDelimiterRight: '>>'
     })
-    const html = await engine.parseAndRender('<< "liquid" | capitalize >>')
+    const html = engine.parseAndRenderSync('<< "liquid" | capitalize >>')
     return expect(html).toBe('Liquid')
   })
   it('should support trimming with tag_delimiter_* set', async function () {
@@ -24,7 +24,7 @@ describe('LiquidOptions#*_delimiter_*', function () {
       trimTagLeft: true,
       trimTagRight: true
     })
-    const html = await engine.parseAndRender(' <%=if true%> \tfoo\t <%=endif%> ')
+    const html = engine.parseAndRenderSync(' <%=if true%> \tfoo\t <%=endif%> ')
     return expect(html).toBe('foo')
   })
 })

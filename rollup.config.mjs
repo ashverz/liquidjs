@@ -39,21 +39,6 @@ const versionInjection = versionInjector({
   exclude: []
 })
 const input = './src/index.ts'
-const browserFS = {
-  include: './src/liquid-options.ts',
-  delimiters: ['', ''],
-  './fs/fs-impl': './build/fs-impl-browser'
-}
-const browserStream = {
-  include: './src/emitters/index.ts',
-  delimiters: ['', ''],
-  './streamed-emitter': '../build/streamed-emitter-browser'
-}
-const esmRequire = {
-  include: './src/fs/node.ts',
-  delimiters: ['', ''],
-  './node-require': '../build/node-require.mjs'
-}
 
 const nodeCjs = {
   output: [{
@@ -67,22 +52,6 @@ const nodeCjs = {
   input
 }
 
-const nodeEsm = {
-  output: [{
-    file: 'dist/liquid.node.esm.js',
-    format: 'esm',
-    banner
-  }],
-  external: ['path', 'fs', 'stream'],
-  plugins: [
-    versionInjection,
-    replace(esmRequire),
-    typescript(tsconfig('es6'))
-  ],
-  treeshake,
-  input
-}
-
 const browserEsm = {
   output: [{
     file: 'dist/liquid.browser.esm.js',
@@ -92,8 +61,6 @@ const browserEsm = {
   external: ['path', 'fs'],
   plugins: [
     versionInjection,
-    replace(browserFS),
-    replace(browserStream),
     typescript(tsconfig('es6'))
   ],
   treeshake,
@@ -110,8 +77,6 @@ const browserUmd = {
   }],
   plugins: [
     versionInjection,
-    replace(browserFS),
-    replace(browserStream),
     typescript(tsconfig('es5'))
   ],
   treeshake,
@@ -128,8 +93,6 @@ const browserMin = {
   }],
   plugins: [
     versionInjection,
-    replace(browserFS),
-    replace(browserStream),
     typescript(tsconfig('es5')),
     uglify()
   ],
@@ -140,9 +103,9 @@ const browserMin = {
 const bundles = []
 const env = process.env.BUNDLES || ''
 if (env.includes('cjs')) bundles.push(nodeCjs)
-if (env.includes('esm')) bundles.push(nodeEsm, browserEsm)
+if (env.includes('esm')) bundles.push(browserEsm)
 if (env.includes('umd')) bundles.push(browserUmd)
 if (env.includes('min')) bundles.push(browserMin)
-if (bundles.length === 0) bundles.push(nodeCjs, nodeEsm, browserEsm, browserUmd, browserMin)
+if (bundles.length === 0) bundles.push(nodeCjs, browserEsm, browserUmd, browserMin)
 
 export default bundles

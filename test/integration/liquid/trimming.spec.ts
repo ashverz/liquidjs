@@ -6,34 +6,34 @@ describe('LiquidOptions#trimming', function () {
   describe('tag trimming', function () {
     it('should respect trimTagLeft', async function () {
       const engine = new Liquid({ trimTagLeft: true })
-      const html = await engine.parseAndRender(' \n \t{%if true%}foo{%endif%} ')
+      const html = engine.parseAndRenderSync(' \n \t{%if true%}foo{%endif%} ')
       return expect(html).toBe('foo ')
     })
     it('should respect trimTagRight', async function () {
       const engine = new Liquid({ trimTagRight: true } as any)
-      const html = await engine.parseAndRender('\t{%if true%}foo{%endif%} \n')
+      const html = engine.parseAndRenderSync('\t{%if true%}foo{%endif%} \n')
       return expect(html).toBe('\tfoo')
     })
     it('should not trim value', async function () {
       const engine = new Liquid({ trimTagLeft: true, trimTagRight: true } as any)
-      const html = await engine.parseAndRender('{%if true%}a {{name}} b{%endif%}', ctx)
+      const html = engine.parseAndRenderSync('{%if true%}a {{name}} b{%endif%}', ctx)
       return expect(html).toBe('a harttle b')
     })
   })
   describe('value trimming', function () {
     it('should respect trimOutputLeft', async function () {
       const engine = new Liquid({ trimOutputLeft: true } as any)
-      const html = await engine.parseAndRender(' \n \t{{name}} ', ctx)
+      const html = engine.parseAndRenderSync(' \n \t{{name}} ', ctx)
       return expect(html).toBe('harttle ')
     })
     it('should respect trimOutputRight', async function () {
       const engine = new Liquid({ trimOutputRight: true } as any)
-      const html = await engine.parseAndRender(' \n \t{{name}} ', ctx)
+      const html = engine.parseAndRenderSync(' \n \t{{name}} ', ctx)
       return expect(html).toBe(' \n \tharttle')
     })
     it('should respect not trim tag', async function () {
       const engine = new Liquid({ trimOutputLeft: true, trimOutputRight: true } as any)
-      const html = await engine.parseAndRender('\t{% if true %} aha {%endif%}\t')
+      const html = engine.parseAndRenderSync('\t{% if true %} aha {%endif%}\t')
       return expect(html).toBe('\t aha \t')
     })
   })
@@ -41,12 +41,12 @@ describe('LiquidOptions#trimming', function () {
     const src = '\n {%-if true-%}\n a \n{{-name-}}{%-endif-%}\n '
     it('should enable greedy by default', async function () {
       const engine = new Liquid()
-      const html = await engine.parseAndRender(src, ctx)
+      const html = engine.parseAndRenderSync(src, ctx)
       return expect(html).toBe('aharttle')
     })
     it('should allow greedy:false', async function () {
       const engine = new Liquid({ greedy: false } as any)
-      const html = await engine.parseAndRender(src, ctx)
+      const html = engine.parseAndRenderSync(src, ctx)
       return expect(html).toBe('\n a \nharttle ')
     })
   })
@@ -62,7 +62,7 @@ describe('LiquidOptions#trimming', function () {
         '{%- endif -%}'
       ].join('\n')
       const dst = 'Wow, John G. Chalmers-Smith, you have a long name!'
-      const html = await engine.parseAndRender(src)
+      const html = engine.parseAndRenderSync(src)
       return expect(html).toBe(dst)
     })
     it('should not trim when not specified', async function () {
@@ -76,7 +76,7 @@ describe('LiquidOptions#trimming', function () {
         '{% endif %}'
       ].join('\n')
       const dst = '\n\n  Wow, John G. Chalmers-Smith, you have a long name!\n'
-      const html = await engine.parseAndRender(src)
+      const html = engine.parseAndRenderSync(src)
       return expect(html).toBe(dst)
     })
   })

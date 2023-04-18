@@ -25,39 +25,39 @@ describe('drop/drop', function () {
     }
   }
   it('should call corresponding method when output', async function () {
-    const html = await liquid.parseAndRender(`{{obj.getName}}`, { obj: new CustomDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.getName}}`, { obj: new CustomDrop() })
     expect(html).toBe('GET NAME')
   })
   it('should call corresponding method when expression evaluates', async function () {
-    const html = await liquid.parseAndRender(`{% if obj.getName == "GET NAME" %}true{% endif %}`, { obj: new CustomDrop() })
+    const html = liquid.parseAndRenderSync(`{% if obj.getName == "GET NAME" %}true{% endif %}`, { obj: new CustomDrop() })
     expect(html).toBe('true')
   })
   it('should read corresponding property', async function () {
-    const html = await liquid.parseAndRender(`{{obj.name}}`, { obj: new CustomDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.name}}`, { obj: new CustomDrop() })
     expect(html).toBe('NAME')
   })
   it('should output empty string if not exist', async function () {
-    const html = await liquid.parseAndRender(`{{obj.foo}}`, { obj: new CustomDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.foo}}`, { obj: new CustomDrop() })
     expect(html).toBe('')
   })
   it('should respect liquidMethodMissing', async function () {
-    const html = await liquid.parseAndRender(`{{obj.foo}}`, { obj: new CustomDropWithMethodMissing() })
+    const html = liquid.parseAndRenderSync(`{{obj.foo}}`, { obj: new CustomDropWithMethodMissing() })
     expect(html).toBe('FOO')
   })
   it('should call corresponding promise method', async function () {
-    const html = await liquid.parseAndRender(`{{obj.getName}}`, { obj: new PromiseDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.getName}}`, { obj: new PromiseDrop() })
     expect(html).toBe('GET NAME')
   })
   it('should read corresponding promise property', async function () {
-    const html = await liquid.parseAndRender(`{{obj.name}}`, { obj: new PromiseDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.name}}`, { obj: new PromiseDrop() })
     expect(html).toBe('NAME')
   })
   it('should resolve before calling filters', async function () {
-    const html = await liquid.parseAndRender(`{{obj.name | downcase}}`, { obj: new PromiseDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.name | downcase}}`, { obj: new PromiseDrop() })
     expect(html).toBe('name')
   })
   it('should support promise returned by liquidMethodMissing', async function () {
-    const html = await liquid.parseAndRender(`{{obj.foo}}`, { obj: new PromiseDrop() })
+    const html = liquid.parseAndRenderSync(`{{obj.foo}}`, { obj: new PromiseDrop() })
     expect(html).toBe('FOO')
   })
   it('should respect valueOf', async () => {
@@ -68,7 +68,7 @@ describe('drop/drop', function () {
       }
     }
     const tpl = '{{drop}}: {% for field in drop %}{{ field }};{% endfor %}'
-    const html = await liquid.parseAndRender(tpl, { drop: new CustomDrop() })
+    const html = liquid.parseAndRenderSync(tpl, { drop: new CustomDrop() })
     expect(html).toBe('foobar: foo;bar;')
   })
   it('should support valueOf in == expression', async () => {
@@ -80,7 +80,7 @@ describe('drop/drop', function () {
     const address = new AddressDrop()
     const customer = { default_address: new AddressDrop() }
     const tpl = `{% if address == customer.default_address %}{{address}}{% endif %}`
-    const html = await liquid.parseAndRender(tpl, { address, customer })
+    const html = liquid.parseAndRenderSync(tpl, { address, customer })
     expect(html).toBe('test')
   })
 })

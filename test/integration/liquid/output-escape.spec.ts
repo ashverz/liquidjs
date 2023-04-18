@@ -3,7 +3,7 @@ import { Liquid } from '../../../src/liquid'
 describe('LiquidOptions#*outputEscape*', function () {
   it('when outputEscape is not set', async function () {
     const engine = new Liquid()
-    const html = await engine.parseAndRender('{{"<"}}')
+    const html = engine.parseAndRenderSync('{{"<"}}')
     expect(html).toBe('<')
   })
 
@@ -11,7 +11,7 @@ describe('LiquidOptions#*outputEscape*', function () {
     const engine = new Liquid({
       outputEscape: 'escape'
     })
-    const html = await engine.parseAndRender('{{"<"}}')
+    const html = engine.parseAndRenderSync('{{"<"}}')
     expect(html).toBe('&lt;')
   })
 
@@ -19,7 +19,7 @@ describe('LiquidOptions#*outputEscape*', function () {
     const engine = new Liquid({
       outputEscape: 'json'
     })
-    const html = await engine.parseAndRender('{{"<"}}')
+    const html = engine.parseAndRenderSync('{{"<"}}')
     expect(html).toBe('"<"')
   })
 
@@ -27,7 +27,7 @@ describe('LiquidOptions#*outputEscape*', function () {
     const engine = new Liquid({
       outputEscape: (v: any) => `{${v}}`
     })
-    const html = await engine.parseAndRender('{{"<"}}')
+    const html = engine.parseAndRenderSync('{{"<"}}')
     expect(html).toBe('{<}')
   })
 
@@ -35,7 +35,7 @@ describe('LiquidOptions#*outputEscape*', function () {
     const engine = new Liquid({
       outputEscape: 'escape'
     })
-    const html = await engine.parseAndRender('{{"<" | raw}}')
+    const html = engine.parseAndRenderSync('{{"<" | raw}}')
     expect(html).toBe('<')
   })
 })

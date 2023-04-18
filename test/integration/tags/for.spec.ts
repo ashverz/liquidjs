@@ -24,57 +24,57 @@ describe('tags/for', function () {
 
   it('should support array', async function () {
     const src = '{%for c in alpha%}{{c}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('abc')
   })
 
   it('should support promise of array', async function () {
     const src = '{%for c in promiseArray%}{{c}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('abc')
   })
 
   it('should support object', async function () {
     const src = '{%for item in obj%}{{item[0]}},{{item[1]}}-{%else%}b{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('foo,bar-coo,haa-')
   })
   it('should output forloop', async function () {
     const src = '{%for i in (1..1)%}{{forloop}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('{"i":0,"length":1,"name":"i-(1..1)"}')
   })
   it('should output forloop collection name', async function () {
     const src = '{%for c in alpha%}{{forloop.name}}-{{c}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('c-alpha-ac-alpha-bc-alpha-c')
   })
   it('should output forloop property accessor name', async function () {
     const src = '{%for c in obj.foo%}{{forloop.name}}-{{c}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('c-obj.foo-bar')
   })
   it('should output forloop quoted name', async function () {
     const src = '{%for str in "string"%}{{forloop.name}}-{{str}}{%endfor%}'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe('str-"string"-string')
   })
   describe('illegal', function () {
     it('should reject when for not closed', function () {
       const src = '{%for c in alpha%}{{c}}'
-      return expect(liquid.parseAndRender(src, scope))
+      return expect(liquid.parseAndRenderSync(src, scope))
         .rejects.toThrow(/tag .* not closed/)
     })
 
     it('should reject when for in not found', function () {
       const src = '{%for c alpha%}{{c}}'
-      return expect(liquid.parseAndRender(src, scope))
+      return expect(liquid.parseAndRenderSync(src, scope))
         .rejects.toThrow('illegal tag: {%for c alpha%}, line:1, col:1')
     })
 
     it('should reject when inner templates rejected', function () {
       const src = '{%for c in alpha%}{%throwingTag%}{%endfor%}'
-      return expect(liquid.parseAndRender(src, scope))
+      return expect(liquid.parseAndRenderSync(src, scope))
         .rejects.toThrow(/intended render error/)
     })
   })
@@ -82,38 +82,38 @@ describe('tags/for', function () {
   describe('else', function () {
     it('should goto else for empty array', async function () {
       const src = '{%for c in emptyArray%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
 
     it('should treat non-empty string as one single element', async function () {
       const src = '{%for c in "abc"%}x{{c}}{%else%}y{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('xabc')
     })
 
     it('should goto else for empty string', async function () {
       const src = '{%for c in ""%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
 
     it('should goto else for empty string object', async function () {
       // it should be false although `new String` is none-conform
       const src = '{%for c in strObj%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
 
     it('should goto else for empty object', async function () {
       const src = '{%for c in emptyObj%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
 
     it('should goto else for null-prototyped object', async function () {
       const src = '{%for c in nullProtoObj%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
   })
@@ -128,7 +128,7 @@ describe('tags/for', function () {
     const dst = 'true.1.0.false.3.3.2a\n' +
             'false.2.1.false.3.2.1b\n' +
             'false.3.2.true.3.1.0c\n'
-    const html = await liquid.parseAndRender(src, scope)
+    const html = liquid.parseAndRenderSync(src, scope)
     return expect(html).toBe(dst)
   })
 
@@ -137,7 +137,7 @@ describe('tags/for', function () {
       const src = '{% for i in (1..5) %}' +
               '{% if i == 4 %}continue{% continue %}{% endif %}{{i}}' +
               '{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('123continue5')
     })
     it('should output contents before continue', async function () {
@@ -145,7 +145,7 @@ describe('tags/for', function () {
         '{% if i == 4 %}continue{% continue %}{% endif %}' +
         '{{ i }}' +
         '{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('123continue5')
     })
   })
@@ -155,7 +155,7 @@ describe('tags/for', function () {
         '{% if i == 4 %}{% break %}{% endif %}' +
         '{{ i }}' +
         '{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('123')
     })
     it('should output contents before break', async function () {
@@ -163,7 +163,7 @@ describe('tags/for', function () {
         '{% if i == 4 %}breaking{% break %}{% endif %}' +
         '{{ i }}' +
         '{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('123breaking')
     })
   })
@@ -171,22 +171,22 @@ describe('tags/for', function () {
   describe('limit', function () {
     it('should support for with limit', async function () {
       const src = '{% for i in (1..5) limit:2 %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('12')
     })
     it('should set forloop.last properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.last}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('false true ')
     })
     it('should set forloop.first properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.first}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('true false ')
     })
     it('should set forloop.length properly', function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.length}} {%endfor%}'
-      return expect(liquid.parseAndRender(src, scope))
+      return expect(liquid.parseAndRenderSync(src, scope))
         .resolves.toBe('2 2 ')
     })
   })
@@ -194,48 +194,48 @@ describe('tags/for', function () {
   describe('offset', function () {
     it('should support offset with limit', async function () {
       const src = '{% for i in (1..10) limit:2 offset:5%}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('67')
     })
     it('should set index properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.index}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('1 2 ')
     })
     it('should set index0 properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.index0}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('0 1 ')
     })
     it('should set rindex properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.rindex}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('2 1 ')
     })
     it('should set rindex0 properly', async function () {
       const src = '{%for i in (1..10) limit:2 offset:3%}{{forloop.rindex0}} {%endfor%}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('1 0 ')
     })
     it('should continue from limit-ed loop', async function () {
       const src = '{%for i in arr limit:2%}{{i}}{%endfor%}-{%for i in arr offset:continue%}{{i}}{%endfor%}'
-      const html = await liquid.parseAndRender(src, { arr: [1, 2, 3, 4, 5] })
+      const html = liquid.parseAndRenderSync(src, { arr: [1, 2, 3, 4, 5] })
       return expect(html).toBe('12-345')
     })
     it('should continue nothing for fully iterated loop', async function () {
       const src = '{%for i in arr%}{{i}}{%endfor%}-{%for i in arr offset:continue%}{{i}}{%endfor%}'
-      const html = await liquid.parseAndRender(src, { arr: [1, 2, 3, 4, 5] })
+      const html = liquid.parseAndRenderSync(src, { arr: [1, 2, 3, 4, 5] })
       return expect(html).toBe('12345-')
     })
     it('should treat different variable names as different forloop', async function () {
       const src = '{%for i in (1..5)%}{{i}}{%endfor%}-{%for j in (1..5) offset:continue%}{{j}}{%endfor%}'
-      const html = await liquid.parseAndRender(src, {})
+      const html = liquid.parseAndRenderSync(src, {})
       return expect(html).toBe('12345-12345')
     })
     it('should treat different collection names as different forloop', async function () {
       const src = '{%for i in arr1%}{{i}}{%endfor%}-{%for i in arr2 offset:continue%}{{i}}{%endfor%}'
       const arr = [1, 2, 3, 4, 5]
-      const html = await liquid.parseAndRender(src, { arr1: arr, arr2: arr })
+      const html = liquid.parseAndRenderSync(src, { arr1: arr, arr2: arr })
       return expect(html).toBe('12345-12345')
     })
   })
@@ -243,33 +243,33 @@ describe('tags/for', function () {
   describe('reversed', function () {
     it('should support for reversed in the last position', async function () {
       const src = '{% for i in (1..8) limit:2 reversed %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('21')
     })
 
     it('should support for reversed in the first position', async function () {
       const src = '{% for i in (1..8) reversed limit:2 %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('21')
     })
 
     it('should support for reversed in the first position with orderedFilterParameters=true', async function () {
       const liquid = new Liquid({ orderedFilterParameters: true })
       const src = '{% for i in (1..8) reversed limit:2 %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('87')
     })
 
     it('should support for reversed in the middle position', async function () {
       const src = '{% for i in (1..8) offset:2 reversed limit:3 %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src)
+      const html = liquid.parseAndRenderSync(src)
       return expect(html).toBe('543')
     })
 
     it('should support for reversed in the middle position with orderedFilterParameters=true', async function () {
       const liquid = new Liquid({ orderedFilterParameters: true })
       const src = '{% for i in (1..8) offset:2 reversed limit:3 %}{{ i }}{% endfor %}'
-      const html = await liquid.parseAndRender(src)
+      const html = liquid.parseAndRenderSync(src)
       return expect(html).toBe('876')
     })
   })
@@ -297,7 +297,7 @@ describe('tags/for', function () {
     })
     it('should goto else for empty array', async function () {
       const src = '{%for c in emptyArray%}a{%else%}b{%endfor%}'
-      const html = await liquid.parseAndRenderSync(src, scope)
+      const html = liquid.parseAndRenderSync(src, scope)
       return expect(html).toBe('b')
     })
   })

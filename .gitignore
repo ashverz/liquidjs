@@ -16,4 +16,4 @@ demo/*/yarn.json
 # editors
 .*.swp
 .vscode
-
+.DS_Store

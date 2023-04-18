@@ -13,13 +13,13 @@ describe('liquid#registerFilter()', function () {
     it('should support key-value arguments', async () => {
       const src = `{{ "a" | obj_test: k1: "v1", k2: foo }}`
       const dst = '["a",["k1","v1"],["k2","bar"]]'
-      const html = await liquid.parseAndRender(src, { foo: 'bar' })
+      const html = liquid.parseAndRenderSync(src, { foo: 'bar' })
       return expect(html).toBe(dst)
     })
     it('should support mixed arguments', async () => {
       const src = `{{ "a" | obj_test: "something", k1: "v1", k2: foo }}`
       const dst = '["a","something",["k1","v1"],["k2","bar"]]'
-      const html = await liquid.parseAndRender(src, { foo: 'bar' })
+      const html = liquid.parseAndRenderSync(src, { foo: 'bar' })
       return expect(html).toBe(dst)
     })
   })
@@ -31,7 +31,7 @@ describe('liquid#registerFilter()', function () {
       })
       const src = `{{ userId | get_user_data | json }}`
       const dst = '{"userId":"alice","userName":"ALICE"}'
-      const html = await liquid.parseAndRender(src, { userId: 'alice' })
+      const html = liquid.parseAndRenderSync(src, { userId: 'alice' })
       return expect(html).toBe(dst)
     })
   })
@@ -46,7 +46,7 @@ describe('liquid#registerFilter()', function () {
       liquid.registerFilter('break', (str) => str.replace(/\n/g, '<br/>'))
       const src = `{{ "a\nb" | break }}`
       const dst = 'a&lt;br/&gt;b'
-      const html = await liquid.parseAndRender(src)
+      const html = liquid.parseAndRenderSync(src)
       return expect(html).toBe(dst)
     })
     it('should not escape filter output when registered as "raw"', async () => {
@@ -56,7 +56,7 @@ describe('liquid#registerFilter()', function () {
       })
       const src = `{{ "a\nb" | break }}`
       const dst = 'a<br/>b'
-      const html = await liquid.parseAndRender(src)
+      const html = liquid.parseAndRenderSync(src)
       return expect(html).toBe(dst)
     })
   })

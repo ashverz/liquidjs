@@ -442,7 +442,7 @@ describe('Whitespace Control', function () {
   cases.forEach(item => it(
     item.text,
     async () => {
-      const html = await liquid.parseAndRender(item.text)
+      const html = liquid.parseAndRenderSync(item.text)
       expect(html).toBe(item.expected)
     }
   ))

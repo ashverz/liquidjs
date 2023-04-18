@@ -6,7 +6,7 @@ describe('liquid#registerTag()', function () {
     liquid.registerTag('simple-string', {
       render: () => 'B'
     })
-    const html = await liquid.parseAndRender(`A{% simple-string %}C`)
+    const html = liquid.parseAndRenderSync(`A{% simple-string %}C`)
     return expect(html).toBe('ABC')
   })
   it('should support async tag render', async () => {
@@ -14,7 +14,7 @@ describe('liquid#registerTag()', function () {
     liquid.registerTag('async-string', {
       render: async () => 'B'
     })
-    const html = await liquid.parseAndRender(`A{% async-string %}C`)
+    const html = liquid.parseAndRenderSync(`A{% async-string %}C`)
     return expect(html).toBe('ABC')
   })
   it('should have access to ctx in render()', async () => {
@@ -22,7 +22,7 @@ describe('liquid#registerTag()', function () {
     liquid.registerTag('dynamic-string', {
       render: async (ctx) => ctx.get(['c'])
     })
-    const html = await liquid.parseAndRender(`A{% dynamic-string %}C`, {
+    const html = liquid.parseAndRenderSync(`A{% dynamic-string %}C`, {
       c: 'B'
     })
     return expect(html).toBe('ABC')
@@ -33,7 +33,7 @@ describe('liquid#registerTag()', function () {
       parse: function (token) { this.variable = token.args.split('=')[1] },
       render: async function (ctx) { return ctx.get(this.variable) }
     })
-    const html = await liquid.parseAndRender(`A{% argument-reflector variable=c %}C`, {
+    const html = liquid.parseAndRenderSync(`A{% argument-reflector variable=c %}C`, {
       c: 'B'
     })
     return expect(html).toBe('ABC')
